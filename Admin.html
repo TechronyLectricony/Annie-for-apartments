@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة تحكم المشرف</title>
+  <link rel="stylesheet" href="cssstyle.css">
+  <style>
+    /* تخصيصات لوحة التحكم */
+    .admin-dashboard {
+      max-width: 1200px;
+      margin: 100px auto 50px;
+      padding: 20px;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    #properties-list {
+      display: grid;
+      gap: 20px;
+    }
+
+    .property-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #0078d7;
+    }
+
+    .property-meta {
+      display: flex;
+      gap: 15px;
+      color: #666;
+      margin: 10px 0;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .admin-btn {
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .delete-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-dashboard">
+  <div class="admin-header">
+    <h1>مرحبا، المشرف 🛡️</h1>
+    <button onclick="showAddForm()" class="admin-btn">➕ إضافة عقار جديد</button>
+  </div>
+
+  <div id="properties-list">
+    <!-- العقارات تظهر هنا -->
+  </div>
+</div>
+
+<!-- نافذة إضافة العقار -->
+<div id="add-modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="hideModal()">&times;</span>
+    <h2>إضافة عقار جديد</h2>
+    <form onsubmit="addNewProperty(event)">
+      <input type="text" id="prop-title" placeholder="عنوان العقار" required>
+      <input type="text" id="prop-location" placeholder="الموقع التفصيلي" required>
+      <input type="number" id="prop-stories" placeholder="عدد الطوابق" min="1" required>
+      <select id="prop-type" required>
+        <option value="">اختر النوع</option>
+        <option>شقة</option>
+        <option>فيلا</option>
+      </select>
+      <div class="form-buttons">
+        <button type="submit" class="admin-btn">💾 حفظ العقار</button>
+        <button type="button" class="delete-btn" onclick="hideModal()">إغلاق</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="jsmain.js"></script>
+<script>
+  // تحميل البيانات عند فتح الصفحة
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user || !user.isAdmin) {
+      window.location.href = 'login.html';
+      return;
+    }
+    loadAdminProperties();
+  });
+
+  // تحميل العقارات
+  function loadAdminProperties() {
+    const propertiesList = document.getElementById('properties-list');
+    propertiesList.innerHTML = '';
+    
+    const properties = JSON.parse(localStorage.getItem('properties')) || [];
+    
+    properties.forEach(prop => {
+      const propElement = document.createElement('div');
+      propElement.className = 'property-card';
+      propElement.innerHTML = `
+        <h3>${prop.title}</h3>
+        <div class="property-meta">
+          <span>📍 ${prop.location}</span>
+          <span>🏢 ${prop.type}</span>
+          <span>👤 ${prop.owner}</span>
+        </div>
+        <div class="admin-actions">
+          <button 
+            class="delete-btn"
+            onclick="deleteProperty('${prop.id}')"
+          >
+            🗑️ حذف نهائي
+          </button>
+        </div>
+      `;
+      propertiesList.appendChild(propElement);
+    });
+  }
+
+  // إظهار/إخفاء النموذج
+  function showAddForm() {
+    document.getElementById('add-modal').style.display = 'block';
+  }
+
+  function hideModal() {
+    document.getElementById('add-modal').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>

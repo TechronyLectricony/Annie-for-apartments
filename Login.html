@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تسجيل الدخول</title>
+  <link rel="stylesheet" href="cssstyle.css">
+  <style>
+    /* تخصيصات إضافية للصفحة */
+    body {
+      background: #f5f5f5;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-container h2 {
+      color: #003366;
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    .form-input:focus {
+      border-color: #0078d7;
+      outline: none;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    .login-btn:hover {
+      background: #005fa3;
+    }
+
+    .error-msg {
+      color: #dc3545;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>تسجيل الدخول إلى النظام</h2>
+    <form id="login-form">
+      <input 
+        type="text" 
+        id="username" 
+        class="form-input"
+        placeholder="اسم المستخدم" 
+        required
+      >
+      
+      <input 
+        type="password" 
+        id="password" 
+        class="form-input"
+        placeholder="كلمة المرور" 
+        required
+      >
+      
+      <button type="submit" class="login-btn">دخول</button>
+      <div id="error-msg" class="error-msg"></div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorMsg = document.getElementById('error-msg');
+
+      // مسح الرسائل القديمة
+      errorMsg.style.display = 'none';
+
+      // بيانات الدخول الثابتة للأدمن
+      if (username === 'admin' && password === 'admin123') {
+        const userData = {
+          username: 'admin',
+          isAdmin: true,
+          token: Date.now().toString(36)
+        };
+        handleLoginSuccess(userData);
+        return;
+      }
+
+      // مصادقة المستخدم العادي
+      if (username && password) {
+        const userData = {
+          username,
+          isAdmin: false,
+          token: Date.now().toString(36)
+        };
+        handleLoginSuccess(userData);
+      } else {
+        showError('الرجاء ملء جميع الحقول!');
+      }
+    });
+
+    function handleLoginSuccess(userData) {
+      localStorage.setItem('currentUser', JSON.stringify(userData));
+      
+      // التوجيه إلى الصفحة المطلوبة
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectUrl = urlParams.get('redirect') || 'FindMyHome.html';
+      
+      window.location.href = `${redirectUrl}?login_success=true`;
+    }
+
+    function showError(message) {
+      const errorMsg = document.getElementById('error-msg');
+      errorMsg.textContent = message;
+      errorMsg.style.display = 'block';
+    }
+
+    // التحقق من تسجيل الدخول المسبق
+    if (localStorage.getItem('currentUser')) {
+      window.location.href = 'FindMyHome.html';
+    }
+  </script>
+</body>
+</html>

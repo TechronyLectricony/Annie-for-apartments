@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>موقع عقاري</title>
+  <link rel="stylesheet" href="cssstyle.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="container">
+    <div class="logo">🏡 عقاري</div>
+    <nav class="nav">
+      <a href="index.html">الرئيسية</a>
+      <a href="#search-results">العقارات</a>
+      <a href="#contact">اتصل بنا</a>
+    </nav>
+    <div class="auth-buttons">
+      <a href="javascript:void(0)" id="login-link" onclick="handleAuth()">تسجيل دخول</a>
+      <a href="#" id="add-listing" style="display:none;" onclick="showAddForm()">➕ إضافة عقار</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="overlay"></div>
+  <div class="hero-content">
+    <h1>ابحث عن منزل أحلامك</h1>
+    <p>أكثر من 5000+ عقار متاح الآن</p>
+
+    <div class="search-box">
+      <form id="search-form" onsubmit="searchProperties(event)">
+        <div class="buttons">
+          <button type="button" class="active" data-type="rent">الإيجارات</button>
+          <button type="button" data-type="sale">مبيعات</button>
+        </div>
+
+        <div class="filters">
+          <select id="city">
+            <option value="">جميع المدن</option>
+            <option>القاهرة</option>
+            <option>الرياض</option>
+            <option>دبي</option>
+          </select>
+
+          <select id="type">
+            <option value="">جميع الأنواع</option>
+            <option>شقة</option>
+            <option>فيلا</option>
+          </select>
+
+          <button type="submit" class="search-btn">🔍 ابحث الآن</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- قسم نتائج البحث -->
+<section id="search-results" class="results-section"></section>
+
+<!-- نافذة إضافة العقار -->
+<div id="add-modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="hideModal()">&times;</span>
+    <h2>إضافة عقار جديد</h2>
+    <form onsubmit="addNewProperty(event)">
+      <input type="text" id="prop-title" placeholder="عنوان العقار" required>
+      <input type="text" id="prop-location" placeholder="الموقع التفصيلي" required>
+      <input type="number" id="prop-stories" placeholder="عدد الطوابق" min="1" required>
+      <select id="prop-type" required>
+        <option value="">اختر نوع العقار</option>
+        <option>شقة</option>
+        <option>فيلا</option>
+      </select>
+      <div class="form-buttons">
+        <button type="submit" class="save-btn">💾 حفظ العقار</button>
+        <button type="button" class="cancel-btn" onclick="hideModal()">❌ إلغاء</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="jsmain.js"></script>
+<script>
+  // تفعيل أزرار نوع البحث
+  document.querySelectorAll('.buttons button').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelector('.active').classList.remove('active');
+      this.classList.add('active');
+    });
+  });
+
+  // إدارة حالة المصادقة
+  function handleAuth() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (user) {
+      localStorage.removeItem('currentUser');
+      location.reload();
+    } else {
+      window.location.href = `login.html?redirect=${encodeURIComponent(location.href)}`;
+    }
+  }
+</script>
+
+</body>
+</html>
